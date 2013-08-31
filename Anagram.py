@@ -73,6 +73,18 @@ def _looping_anagram(letters, howmany=1, MIN=3):
     return anagrams
 
 def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
+    """ Find anagrams for a given letter sequence. Can find multi-word anagrams
+        though howmany=3 can take quite a while.
+
+    >>> looping_anagram("AEGLLRY")
+    ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
+
+    >>> looping_anagram("GOLFJUMP", 2)
+    ['FLOG JUMP', 'FLUMP JOG', 'GOLF JUMP']
+
+    >>> looping_anagram("GOLFJUMP", 2, 4)
+    ['FLOG JUMP', 'GOLF JUMP']
+    """
     timestart = time()
     letters = letters.replace(" ", "").upper()
     anagrams = sorted(_looping_anagram(letters, howmany, MIN))

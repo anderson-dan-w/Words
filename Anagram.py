@@ -63,7 +63,7 @@ def _looping_anagram(letters, howmany=1, MIN=3):
         already_seen.update([word1, word2])
         if len(word1) < MIN or len(word2) < (MIN * (howmany - 1)):
             continue
-        anagram1 = _anagrams[_calcValue(word1)]
+        anagram1 = _anagrams[_calc_value(word1)]
         if not anagram1:
             continue
         anagram2 = _looping_anagram(word2, howmany-1)
@@ -71,6 +71,15 @@ def _looping_anagram(letters, howmany=1, MIN=3):
             for a2 in anagram2:
                 anagrams.add(" ".join(sorted((a1 + " " + a2).split(" "))))
     return anagrams
+
+def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
+    timestart = time()
+    letters = letters.replace(" ", "").upper()
+    anagrams = sorted(_looping_anagram(letters, howmany, MIN))
+    if verbose:
+        print("Took ~%f seconds" % (time() - timestart))
+    return anagrams
+
 
 ##############################################################################
 def not_main():

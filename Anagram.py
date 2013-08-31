@@ -9,7 +9,7 @@ import Constants
 
 _start_time = time()
 _anagrams = collections.defaultdict(list)
-_len_values = collections.defaultdict(collections.defaultdict)
+_len_values = collections.defaultdict(lambda: collections.defaultdict(list))
 
 ##############################################################################
 def _calc_value(word):
@@ -34,5 +34,18 @@ def _calc_value(word):
     for lett in word:
         value *= Constants.primeabet[lett]
     return value
+
+
+
+##############################################################################
+def not_main():
+    global _anagrams
+    global _len_values
+    for word in Constants.words:
+        value = _calc_value(word)
+        _anagrams[value].append(word)
+        len_word = len(word)
+        _len_values[len(word)][value].append(word)
+
 
 

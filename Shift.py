@@ -8,7 +8,7 @@ import itertools
 
 ## dwa modules
 from Words import Constants
-import Dwa_decorator as Dec
+from DWA_decorator import time_me
 
 def _word_diff(word1, word2):
     """ Calculate the difference between two words: they are assumed to be the
@@ -56,7 +56,7 @@ def unshift(string, shifts=4, or_fewer=False):
     return answers
 
 
-@Dec.time_me
+@time_me
 def multi_unshift(string, shifts=4, nwords=2):
     string = string.upper()
     if nwords == 1:

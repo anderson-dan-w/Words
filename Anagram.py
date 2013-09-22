@@ -2,13 +2,11 @@
 
 ## python modules
 import collections
-from time import time
 
 ## my modules
 import Constants
-import Dwa_decorator as Dec
+from DWA_decorator import time_me
 
-_start_time = time()
 _anagrams = collections.defaultdict(list)
 _len_values = collections.defaultdict(lambda: collections.defaultdict(list))
 
@@ -74,7 +72,7 @@ def _looping_anagram(letters, howmany=1, MIN=3):
     return anagrams
 
 
-@Dec.time_me
+@time_me
 def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
     """ Find anagrams for a given letter sequence. Can find multi-word anagrams
         though howmany=3 can take quite a while.
@@ -94,7 +92,7 @@ def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
 
 
 ##############################################################################
-@Dec.time_me
+@time_me
 def not_main():
     global _anagrams
     global _len_values

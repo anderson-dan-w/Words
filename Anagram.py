@@ -6,6 +6,7 @@ from time import time
 
 ## my modules
 import Constants
+import Dwa_decorator as Dec
 
 _start_time = time()
 _anagrams = collections.defaultdict(list)
@@ -72,36 +73,39 @@ def _looping_anagram(letters, howmany=1, MIN=3):
                 anagrams.add(" ".join(sorted((a1 + " " + a2).split(" "))))
     return anagrams
 
+
+@Dec.time_me
 def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
     """ Find anagrams for a given letter sequence. Can find multi-word anagrams
         though howmany=3 can take quite a while.
 
-    >>> looping_anagram("AEGLLRY")
+    >>> looping_anagram("AEGLLRY", verbose=False)
     ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
 
-    >>> looping_anagram("GOLFJUMP", 2)
+    >>> looping_anagram("GOLFJUMP", 2, verbose=False)
     ['FLOG JUMP', 'FLUMP JOG', 'GOLF JUMP']
 
-    >>> looping_anagram("GOLFJUMP", 2, 4)
+    >>> looping_anagram("GOLFJUMP", 2, 4, verbose=False)
     ['FLOG JUMP', 'GOLF JUMP']
     """
-    timestart = time()
     letters = letters.replace(" ", "").upper()
     anagrams = sorted(_looping_anagram(letters, howmany, MIN))
-    if verbose:
-        print("Took ~%f seconds" % (time() - timestart))
     return anagrams
 
 
 ##############################################################################
+@Dec.time_me
 def not_main():
     global _anagrams
     global _len_values
     for word in Constants.words:
         value = _calc_value(word)
         _anagrams[value].append(word)
-        len_word = len(word)
         _len_values[len(word)][value].append(word)
 
 
-
+##############################################################################
+if __name__ == '__main__':
+    main()
+else:
+    not_main()

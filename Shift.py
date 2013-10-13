@@ -6,9 +6,9 @@
 import collections
 import itertools
 
-## dwa modules
-from Words import Constants
-from DWA_decorator import time_me
+## dwanderson modules
+import dwanderson
+WORDS = dwanderson.readin_words()
 
 def _word_diff(word1, word2):
     """ Calculate the difference between two words: they are assumed to be the
@@ -49,14 +49,14 @@ def unshift(string, shifts=4, or_fewer=False):
     """
     string = string.upper()
     answers = collections.defaultdict(list)
-    for word in (w for w in Constants.words if len(w) == len(string)):
+    for word in (w for w in WORDS if len(w) == len(string)):
         diff = _word_diff(string, word)
         if (diff == shifts) or (diff < shifts and or_fewer == True):
             answers[diff].append(word)
     return answers
 
 
-@time_me
+@dwanderson.time_me
 def multi_unshift(string, shifts=4, nwords=2):
     string = string.upper()
     if nwords == 1:

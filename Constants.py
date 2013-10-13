@@ -3,13 +3,11 @@
 import os
 import collections
 
-py_dir = os.path.realpath(os.path.dirname(__file__)) + "/"
-py_text_dir = py_dir + "text/"
-TWL06_txt = py_text_dir + "TWL06.txt"
-WORDS_txt = py_text_dir + "WORDS.txt"
+# dwanderson modules
+from dwanderson import texts
 
 words = set()
-for fname in (TWL06_txt, WORDS_txt):
+for fname in (texts):
     _w = str(open(fname, "r").read()).replace("\r","").upper().split("\n")
     words.update(_w)
 

@@ -6,7 +6,8 @@ import itertools
 
 ## dwanderson imports
 import dwanderson
-from Words import Constants
+
+WORDS = dwanderson.readin_words()
 
 @dwanderson.time_me
 def interleave(string, MIN=None):
@@ -26,6 +27,17 @@ def interleave(string, MIN=None):
                 string2 += lett
         if len(string1) < MIN or len(string2) < MIN:
             continue
-        if string1 in Constants.words and string2 in Constants.words:
+        if string1 in WORDS and string2 in WORDS:
             answers.add(string1 + " " + string2)
+    return answers
+
+@dwanderson.time_me
+def group_unleave(strings, MIN=None):
+    answers = []
+    for string in strings:
+        answers.append(interleave(string, MIN, time_me=False))
+    if any(len(answer) == 0 for answer in answers):
+        print("Couldn't find answers for some strings...")
+        return answers
+    ## this is proving a little tricky to remember how to do
     return answers

@@ -187,7 +187,6 @@ def main():
         p.error("nwords * MIN can't be greater than legnth of letters...")
     if any(val < 0 for val in (nwords, MIN, extra, start)):
         p.error("negative values for arguments make no physical sense")
-
     ## done error-checking input
 
     ## read in only the necessary words
@@ -205,7 +204,10 @@ def main():
     
     if extra == 0:
         anagrams = looping_anagram(letters, nwords, MIN, time_me=False)
-        dwanderson.print_list(["(" + a + ")" for a in anagrams])
+        if nwords == 0:
+            dwanderson.print_list(anagrams)
+        else:
+            dwanderson.print_list(["(" + a + ")" for a in anagrams])
     else:
         anagrams = plus_many(letters, extra, nwords, MIN, start, time_me=False)
         if condensed:

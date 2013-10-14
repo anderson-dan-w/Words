@@ -155,6 +155,70 @@ def not_main():
         ANAGRAMS[value].add(word)
         LEN_VALUES[len(word)][value].add(word)
 
+USAGE = "{} <letters> [-n=nwords] [--MIN=minsize]".format(sys.argv[0])
+DESCR = "Returns list of anagrams for given letters and options"
+@dwanderson.time_me
+def main():
+    global ANAGRAMS
+    global LEN_VALUES
+    global WORDS
+    p = OptionParser(usage=USAGE, description=DESCR)
+    p.add_option('-n','--nwords', type='int', default=1,
+            help='Number of words to comprise a solution, default=1')
+    p.add_option('--MIN', type='int', default=3,
+            help='Minimum number of letters in each anagram, default=3')
+    p.add_option('-e', '--extra', type='int', default=0,
+            help="number of extra, 'variable' letters to use, default=0")
+    p.add_option('-s', '--start', type='str', default='A',
+            help="Letter to start <--extra> letters at, default='A'")
+    p.add_option('-c', '--condensed', action='store_true',
+            help='Prints condensed results in the <--extra> case')
+    options, args = p.parse_args()
+
+    ## error-check input
+    if len(args) != 1:
+        p.error("Requires 1 positional argument, <letters>")
+    letters = args[0].upper()
+    nwords, MIN = options.nwords, options.MIN
+    extra, start, condensed = options.extra, options.start, options.condensed
+    if isinstance(start, str):
+        start = Constants.ALPHABET.index(start)
+    if nwords * MIN > len(letters):
+        p.error("nwords * MIN can't be greater than legnth of letters...")
+    if any(val < 0 for val in (nwords, MIN, extra, start)):
+        p.error("negative values for arguments make no physical sense")
+
+    ## done error-checking input
+
+    ## read in only the necessary words
+    upper_limit = len(letters) + extra - (MIN * (nwords - 1))
+    WORDS = dwanderson.readin_words()
+    for word in WORDS:
+        if nwords == 1 and len(word) != (len(letters) + extra):
+            continue
+        elif nwords > 1 and len(word) not in range(MIN, upper_limit+1):
+            continue
+        value = _calc_value(word)
+        ANAGRAMS[value].add(word)
+        LEN_VALUES[len(word)][value].add(word)
+    ## done reading in
+    
+    if extra == 0:
+        anagrams = looping_anagram(letters, nwords, MIN, time_me=False)
+        dwanderson.print_list(["(" + a + ")" for a in anagrams])
+    else:
+        anagrams = plus_many(letters, extra, nwords, MIN, start, time_me=False)
+        if condensed:
+            anagram_set = set()
+            for s in anagrams.values():
+                anagram_set.update(s)
+            dwanderson.print_list(anagram_set)
+        else:
+            dwanderson.print_dict(anagrams)
+
+    print("Found {} answer{}".format(len(anagrams), 
+                's' if len(anagrams)!= 1 else ''))
+    return
 
 ##############################################################################
 if __name__ == '__main__':

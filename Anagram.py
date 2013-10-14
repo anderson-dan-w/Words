@@ -107,6 +107,25 @@ def anagram_with_fewer(letters, MIN=3):
     return anagrams
 
 @dwanderson.time_me
+def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
+    if isinstance(start, str):
+        start = Constants.ALPHABET.index(start.upper())
+    answer_dict = collections.defaultdict(set)
+    if nblanks == 0:
+        answer_dict[""].update(looping_anagram(letters, nwords, MIN,
+            time_me=False))
+        return  answer_dict
+    for lett in Constants.ALPHABET[start:]:
+        tmp_dict = plus_many(letters+lett, nblanks-1, nwords, MIN, lett,
+                time_me=False)
+        for k, v in tmp_dict.items():
+            if not v:
+                continue
+            key = "".join(sorted(list(lett + k)))
+            answer_dict[key].update(v)
+    return answer_dict
+
+@dwanderson.time_me
 def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
     if isinstance(start, str):
         start = Constants.ALPHABET.index(start.upper())

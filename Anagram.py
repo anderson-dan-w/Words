@@ -86,8 +86,43 @@ def looping_anagram(letters, nwords=1, MIN=3):
     return anagrams
 
 
+@dwanderson.time_me
+def anagram_with_fewer(letters, MIN=3):
+    letters = "".join(lett.upper() for lett in letters if lett.isalpha())
+    anagrams = set()
+    nletts = len(letters)
+    max_iters = 2 ** (nletts - 1)
+    for itr in range(max_iters):
+        word1 = ""
+        word2 = ""
+        for index in range(nletts):
+            if (2 ** index) & itr:
+                word1 += letters[index]
+            else:
+                word2 += letters[index]
+        if len(word1) >= MIN:
+            anagrams.update(looping_anagram(word1, time_me=False))
+        if len(word2) >= MIN:
+            anagrams.update(looping_anagram(word2, time_me=False))
     return anagrams
 
+@dwanderson.time_me
+def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
+    if isinstance(start, str):
+        start = Constants.ALPHABET.index(start.upper())
+    answer_dict = collections.defaultdict(set)
+    if nblanks == 0:
+        answer_dict[""].update(anagram_with_fewer(letters, MIN, time_me=False))
+        return answer_dict
+    for lett in Constants.ALPHABET[start:]:
+        tmp_dict = plus_many_with_fewer(letters + lett, nblanks-1, MIN, start,
+            time_me=False)
+        for k, v in tmp_dict.items():
+            if not v:
+                continue
+            key = "".join(sorted(list(lett + k)))
+            answer_dict[key].update(v)
+    return answer_dict
 
 ##############################################################################
 @dwanderson.time_me

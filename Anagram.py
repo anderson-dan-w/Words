@@ -2,16 +2,19 @@
 
 ## python modules
 import collections
+import sys
+from optparse import OptionParser
 
 ## my modules
 import Constants
-from DWA_decorator import time_me
+import dwanderson
 
-_anagrams = collections.defaultdict(list)
-_len_values = collections.defaultdict(lambda: collections.defaultdict(list))
+ANAGRAMS = collections.defaultdict(set)
+LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
+WORDS = set() ## filled in differently if main() or not_main()
 
 ##############################################################################
-def _calc_value(word):
+def _calc_value(letters):
     """ Calculate a unique value for a given string, which is presumed to be
         comprised of only upper-case letters. Violating this fails silently,
         giving the caller 0 in return.
@@ -30,29 +33,39 @@ def _calc_value(word):
 
     """
     value = 1
-    for lett in word:
-        value *= Constants.primeabet[lett]
+    for lett in letters:
+        value *= Constants.PRIMEABET[lett]
     return value
 
 
-def _looping_anagram(letters, howmany=1, MIN=3):
+@dwanderson.time_me
+def looping_anagram(letters, nwords=1, MIN=3):
     """ Find anagrams of a given set of letters. If only one anagram is desired
         it is a look-up in a precomputed table. If more than one anagram is
         requested, it iteratively considers every possible splitting of
         letters, checking each for anagrams, that are at least MIN letters 
         long, which defaults to 3.
         Appropriate doctests under looping_anagram()
+        >>> looping_anagram("AEGLLRY")
+        ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
+
+        >>> looping_anagram("GOLFJUMP", 2)
+        ['FLOG JUMP', 'FLUMP JOG', 'GOLF JUMP']
+
+        >>> looping_anagram("GOLFJUMP", 2, 4)
+        ['FLOG JUMP', 'GOLF JUMP']
     """
-    if howmany == 1:
-        return _anagrams[_calc_value(letters)]
+    letters = "".join(l.upper() for l in letters if l.isalpha())
+    if nwords == 1:
+        return ANAGRAMS[_calc_value(letters)]
     already_seen = set()
     anagrams = set()
-    len_letts = len(letters)
-    maxIters = 2 ** (len_letts - 1)
+    nletts = len(letters)
+    maxIters = 2 ** (nletts - 1)
     for itr in range(maxIters):
         word1 = ""
         word2 = ""
-        for pos in range(len_letts):
+        for pos in range(nletts):
             if (2**pos) & itr:
                 word1 += letters[pos]
             else:
@@ -60,46 +73,33 @@ def _looping_anagram(letters, howmany=1, MIN=3):
         if word1 in already_seen or word2 in already_seen:
             continue
         already_seen.update([word1, word2])
-        if len(word1) < MIN or len(word2) < (MIN * (howmany - 1)):
+        if len(word1) < MIN or len(word2) < (MIN * (nwords - 1)):
             continue
-        anagram1 = _anagrams[_calc_value(word1)]
+        anagram1 = ANAGRAMS[_calc_value(word1)]
         if not anagram1:
             continue
-        anagram2 = _looping_anagram(word2, howmany-1)
+        anagram2 = looping_anagram(word2, nwords-1, time_me=False)
         for a1 in anagram1:
             for a2 in anagram2:
-                anagrams.add(" ".join(sorted((a1 + " " + a2).split(" "))))
+                ordered = " ".join(sorted((a1 + " " + a2).split(" ")))
+                anagrams.add(ordered)
     return anagrams
 
 
-@time_me
-def looping_anagram(letters, howmany=1, MIN=3, verbose=True):
-    """ Find anagrams for a given letter sequence. Can find multi-word anagrams
-        though howmany=3 can take quite a while.
-
-    >>> looping_anagram("AEGLLRY", verbose=False)
-    ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
-
-    >>> looping_anagram("GOLFJUMP", 2, verbose=False)
-    ['FLOG JUMP', 'FLUMP JOG', 'GOLF JUMP']
-
-    >>> looping_anagram("GOLFJUMP", 2, 4, verbose=False)
-    ['FLOG JUMP', 'GOLF JUMP']
-    """
-    letters = letters.replace(" ", "").upper()
-    anagrams = sorted(_looping_anagram(letters, howmany, MIN))
     return anagrams
 
 
 ##############################################################################
-@time_me
+@dwanderson.time_me
 def not_main():
-    global _anagrams
-    global _len_values
-    for word in Constants.words:
+    global ANAGRAMS
+    global LEN_VALUES
+    global WORDS
+    WORDS = dwanderson.readin_words()
+    for word in WORDS:
         value = _calc_value(word)
-        _anagrams[value].append(word)
-        _len_values[len(word)][value].append(word)
+        ANAGRAMS[value].add(word)
+        LEN_VALUES[len(word)][value].add(word)
 
 
 ##############################################################################

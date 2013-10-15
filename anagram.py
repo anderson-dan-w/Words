@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from __future__ import print_function, division
 
 ## python modules
 import collections
@@ -6,7 +7,7 @@ import sys
 from optparse import OptionParser
 
 ## my modules
-import Constants
+from Words import Constants
 import dwanderson
 
 ANAGRAMS = collections.defaultdict(set)
@@ -204,10 +205,7 @@ def main():
     
     if extra == 0:
         anagrams = looping_anagram(letters, nwords, MIN, time_me=False)
-        if nwords == 0:
-            dwanderson.print_list(anagrams)
-        else:
-            dwanderson.print_list(["(" + a + ")" for a in anagrams])
+        dwanderson.print_list(anagrams)
     else:
         anagrams = plus_many(letters, extra, nwords, MIN, start, time_me=False)
         if condensed:

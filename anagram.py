@@ -4,11 +4,14 @@ from __future__ import print_function, division
 ## python modules
 import collections
 import sys
+import os
 from optparse import OptionParser
 
 ## my modules
-from Words import Constants
+playground = os.path.dirname(os.path.realpath(__file__ + "/.."))
+sys.path.append(playground)
 import dwanderson
+from words import Constants
 
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))

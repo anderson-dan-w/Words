@@ -5,6 +5,7 @@
 ## python modules
 import collections
 import itertools
+import random
 
 ## dwanderson modules
 import dwanderson
@@ -55,7 +56,26 @@ def unshift(string, shifts=4, or_fewer=False):
             answers[diff].append(word)
     return answers
 
+def random_shift(string, nshifts):
+    if isinstance(string, str):
+        string = list(string.upper().replace(" ",""))
+    shifts = 0
+    indices = [x for x in range(len(string))]
+    while shifts < nshifts:
+        if len(indices) == 0:
+            print("only got {} shifts".format(shifts))
+            break
+        idx = random.randrange(0, len(indices))
+        letter = string[indices[idx]]
+        shift = random.randrange(1, min([nshifts - shifts + 1, 14]))
+        direction = (-1) ** random.randint(0, 1)
+        ascii_val = (((ord(letter) - 65) + (shift * direction)) % 26) + 65
+        string[indices[idx]] = chr(ascii_val)
+        shifts += shift
+        indices.pop(idx)
+    return "".join(string)
 
+##############################################################################
 @dwanderson.time_me
 def multi_unshift(string, shifts=4, nwords=2):
     string = string.upper()

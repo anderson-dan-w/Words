@@ -11,7 +11,7 @@ from optparse import OptionParser
 playground = os.path.dirname(os.path.realpath(__file__ + "/.."))
 sys.path.append(playground)
 import dwanderson
-from words import Constants
+from words import constants
 
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
@@ -38,7 +38,7 @@ def _calc_value(letters):
     """
     value = 1
     for lett in letters:
-        value *= Constants.PRIMEABET[lett]
+        value *= constants.PRIMEABET[lett]
     return value
 
 
@@ -110,16 +110,18 @@ def anagram_with_fewer(letters, MIN=3):
             anagrams.update(looping_anagram(word2, time_me=False))
     return anagrams
 
+
+##############################################################################
 @dwanderson.time_me
 def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
     if isinstance(start, str):
-        start = Constants.ALPHABET.index(start.upper())
+        start = constants.ALPHABET.index(start.upper())
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
         answer_dict[""].update(looping_anagram(letters, nwords, MIN,
             time_me=False))
         return  answer_dict
-    for lett in Constants.ALPHABET[start:]:
+    for lett in constants.ALPHABET[start:]:
         tmp_dict = plus_many(letters+lett, nblanks-1, nwords, MIN, lett,
                 time_me=False)
         for k, v in tmp_dict.items():
@@ -132,12 +134,12 @@ def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
 @dwanderson.time_me
 def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
     if isinstance(start, str):
-        start = Constants.ALPHABET.index(start.upper())
+        start = constants.ALPHABET.index(start.upper())
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
         answer_dict[""].update(anagram_with_fewer(letters, MIN, time_me=False))
         return answer_dict
-    for lett in Constants.ALPHABET[start:]:
+    for lett in constants.ALPHABET[start:]:
         tmp_dict = plus_many_with_fewer(letters + lett, nblanks-1, MIN, start,
             time_me=False)
         for k, v in tmp_dict.items():
@@ -146,6 +148,27 @@ def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
             key = "".join(sorted(list(lett + k)))
             answer_dict[key].update(v)
     return answer_dict
+
+
+##############################################################################
+##############################################################################
+def panvowellic(plus_y=False, only_once=True):
+    anagrams = set()
+    str_vowels = "AEIOUY" if plus_y else "AEIOU"
+    vowels = 1
+    multi_vowels = []
+    for v in str_vowels:
+        vowels *= constants.PRIMEABET[v]
+        multi_vowels.append(constants.PRIMEABET[v] ** 2)
+    for value, anagram_list in ANAGRAMS.items():
+        if value % vowels:
+            continue
+        ## value % mv is non-zero, i.e. True, if it doesn't divide evenly,
+        ## meaning there are not 2 of that vowel; so need all to be True
+        if only_once and not all(value % mv for mv in multi_vowels):
+            continue
+        anagrams.update(anagram_list)
+    return anagrams
 
 ##############################################################################
 @dwanderson.time_me
@@ -186,7 +209,7 @@ def main():
     nwords, MIN = options.nwords, options.MIN
     extra, start, condensed = options.extra, options.start, options.condensed
     if isinstance(start, str):
-        start = Constants.ALPHABET.index(start)
+        start = constants.ALPHABET.index(start)
     if nwords * MIN > len(letters):
         p.error("nwords * MIN can't be greater than legnth of letters...")
     if any(val < 0 for val in (nwords, MIN, extra, start)):

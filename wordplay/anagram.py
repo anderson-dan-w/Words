@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-from __future__ import print_function, division
+from __future__ import print_function, division, absolute_import
 import collections
 import sys
 import os
 import json
 from optparse import OptionParser
 
-import constants
-from general import dwanderson
-from general import tools
+from . import constants
+from .general import dwanderson
+from .general import tools
 
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))

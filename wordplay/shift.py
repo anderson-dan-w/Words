@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
-
-## @todo: external tweak: get Dec.time_me to behave only on first/outer call
-
-## python modules
 import collections
 import itertools
 import random
 
-## dwanderson modules
-import dwanderson
+from general import dwanderson
+from general import tools
+
 WORDS = dwanderson.readin_words()
 
 def _word_diff(word1, word2):
@@ -76,7 +73,7 @@ def random_shift(string, nshifts):
     return "".join(string)
 
 ##############################################################################
-@dwanderson.time_me
+@tools.timeme
 def multi_unshift(string, shifts=4, nwords=2):
     string = string.upper()
     if nwords == 1:

@@ -1,16 +1,15 @@
 #!/usr/bin/env python3
 
-## python imports
 import collections
 import copy
 import itertools
 
-## dwanderson imports
-import dwanderson
+from general import dwanderson
+from general import tools
 
 WORDS = dwanderson.readin_words()
 
-@dwanderson.time_me
+@tools.timeme
 def unleave(string, MIN=None):
     string = string.upper().replace(" ","")
     nletts = len(string)
@@ -32,7 +31,7 @@ def unleave(string, MIN=None):
             answers.add(string1 + " " + string2)
     return answers
 
-@dwanderson.time_me
+@tools.timeme
 def group_unleave(strings, MIN=None):
     ## get all the unleaves...
     interleaves = []

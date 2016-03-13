@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-
-##dwanderson imports
-import dwanderson
+from general import dwanderson
+from general import tools
 
 WORDS = dwanderson.readin_words()
 
-@dwanderson.time_me
+@tools.timeme
 def with_and_without(letters, pos=None, MIN=0, MAX=100):
     letters = "".join(l.upper() for l in letters if l.isalpha())
     answers = set()
@@ -19,7 +18,4 @@ def with_and_without(letters, pos=None, MIN=0, MAX=100):
         if without in WORDS:
             answers.add((word, without))
     return answers
-
-
-##############################################################################
 

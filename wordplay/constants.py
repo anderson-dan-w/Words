@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# python modules
 import os
 import collections
 
@@ -16,3 +15,6 @@ SCRABBLE_SCORES.update(zip(ALPHABET, [1, 3, 3,  2, 1, 4, 2, 4, 1, 8, 5, 1,  3,
 SCRABBLE_DISTR = collections.defaultdict(int)
 SCRABBLE_DISTR.update(zip(ALPHABET, [9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2,
                                     6, 8, 2, 1,  6, 4, 6, 4, 2, 2, 1, 2, 1]))
+
+PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(PROJECT_DIR, "data")

@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 ## @todo: external tweak: get Dec.time_me to behave only on first/outer call
 

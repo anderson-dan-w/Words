@@ -1,0 +1,3 @@
+[submodule "wordplay/general"]
+	path = wordplay/general
+	url = https://github.com/anderson-dan-w/general

@@ -1,18 +1,24 @@
 #!/usr/bin/env python3
 from __future__ import print_function, division, absolute_import
 import collections
-import sys
 import os
-import json
+import sys
 from optparse import OptionParser
 
 from . import constants
-from .general import dwanderson
-from .general import tools
 
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
 WORDS = set() ## filled in differently if main() or not_main()
+_textdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "texts")
+_texts = [os.path.join(_textdir, f) for f in os.listdir(_textdir)]
+
+def readin_words():
+    for fname in [f for f in _texts if f.endswith(".dict")]:
+        with open(fname) as fh:
+            text = str(fh.read()).replace("\r", "\n")
+            words = (w for w in text.upper().split("\n") if w)
+            WORDS.update(words)
 
 ##############################################################################
 def _calc_value(letters):
@@ -39,13 +45,11 @@ def _calc_value(letters):
     return value
 
 
-@tools.timeme
-@tools.memo
 def looping_anagram(letters, nwords=1, MIN=3):
     """ Find anagrams of a given set of letters. If only one anagram is desired
         it is a look-up in a precomputed table. If more than one anagram is
         requested, it iteratively considers every possible splitting of
-        letters, checking each for anagrams, that are at least MIN letters 
+        letters, checking each for anagrams, that are at least MIN letters
         long, which defaults to 3.
         >>> looping_anagram("AEGLLRY")
         ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
@@ -87,7 +91,6 @@ def looping_anagram(letters, nwords=1, MIN=3):
     return anagrams
 
 
-@tools.timeme
 def anagram_with_fewer(letters, MIN=3):
     letters = "".join(lett.upper() for lett in letters if lett.isalpha())
     anagrams = set()
@@ -109,7 +112,6 @@ def anagram_with_fewer(letters, MIN=3):
 
 
 ##############################################################################
-@tools.timeme
 def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
     if isinstance(start, str):
         start = constants.ALPHABET.index(start.upper())
@@ -126,7 +128,6 @@ def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
             answer_dict[key].update(v)
     return answer_dict
 
-@tools.timeme
 def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
     if isinstance(start, str):
         start = constants.ALPHABET.index(start.upper())
@@ -165,12 +166,8 @@ def panvowellic(plus_y=False, only_once=True):
     return anagrams
 
 ##############################################################################
-@tools.timeme
 def not_main():
-    global ANAGRAMS
-    global LEN_VALUES
-    global WORDS
-    WORDS = dwanderson.readin_words()
+    readin_words()
     for word in WORDS:
         value = _calc_value(word)
         ANAGRAMS[value].add(word)
@@ -178,11 +175,7 @@ def not_main():
 
 USAGE = "{} <letters> [-n=nwords] [--MIN=minsize]".format(sys.argv[0])
 DESCR = "Returns list of anagrams for given letters and options"
-@tools.timeme
 def main():
-    global ANAGRAMS
-    global LEN_VALUES
-    global WORDS
     p = OptionParser(usage=USAGE, description=DESCR)
     p.add_option('-n','--nwords', type='int', default=1,
             help='Number of words to comprise a solution, default=1')
@@ -212,7 +205,7 @@ def main():
 
     ## read in only the necessary words
     upper_limit = len(letters) + extra - (MIN * (nwords - 1))
-    WORDS = dwanderson.readin_words()
+    readin_words()
     for word in WORDS:
         if nwords == 1 and len(word) != (len(letters) + extra):
             continue
@@ -225,16 +218,16 @@ def main():
     
     if extra == 0:
         anagrams = looping_anagram(letters, nwords, MIN)
-        dwanderson.print_list(anagrams)
+        print(anagrams)
     else:
         anagrams = plus_many(letters, extra, nwords, MIN, start)
         if condensed:
             anagram_set = set()
             for s in anagrams.values():
                 anagram_set.update(s)
-            dwanderson.print_list(anagram_set)
+            print(anagram_set)
         else:
-            dwanderson.print_dict(anagrams)
+            print(anagrams)
 
     print("Found {} answer{}".format(len(anagrams), 
                 's' if len(anagrams)!= 1 else ''))
@@ -244,4 +237,4 @@ def main():
 if __name__ == '__main__':
     main()
 else:
-    not_main(timeme=1)
+    not_main()

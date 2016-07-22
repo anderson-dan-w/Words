@@ -3,6 +3,9 @@ from __future__ import print_function, division, absolute_import
 import collections
 import os
 import sys
+if sys.version_info.major == 3:
+    from functools import reduce
+import operator
 from optparse import OptionParser
 
 from . import constants
@@ -20,29 +23,13 @@ def readin_words():
             words = (w for w in text.upper().split("\n") if w)
             WORDS.update(words)
 
-##############################################################################
+
 def _calc_value(letters):
     """ Calculate a unique value for a given string, which is presumed to be
         comprised of only upper-case letters. Violating this fails silently,
         giving the caller 0 in return.
-
-    >>> _calc_value("CAB")
-    30
-
-    >>> _calc_value("ABC")
-    30
-
-    >>> _calc_value("ALLERGY")
-    3029539502
-
-    >>> _calc_value("allergy")
-    0
-
     """
-    value = 1
-    for lett in letters:
-        value *= constants.PRIMEABET[lett]
-    return value
+    return reduce(operator.mul, (constants.PRIMEABET[l] for l in letters), 1)
 
 
 def looping_anagram(letters, nwords=1, MIN=3):
@@ -51,14 +38,6 @@ def looping_anagram(letters, nwords=1, MIN=3):
         requested, it iteratively considers every possible splitting of
         letters, checking each for anagrams, that are at least MIN letters
         long, which defaults to 3.
-        >>> looping_anagram("AEGLLRY")
-        ['ALLERGY', 'GALLERY', 'LARGELY', 'REGALLY']
-
-        >>> looping_anagram("GOLFJUMP", 2)
-        ['FLOG JUMP', 'FLUMP JOG', 'GOLF JUMP']
-
-        >>> looping_anagram("GOLFJUMP", 2, 4)
-        ['FLOG JUMP', 'GOLF JUMP']
     """
     letters = "".join(l.upper() for l in letters if l.isalpha())
     if nwords == 1:
@@ -145,7 +124,6 @@ def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
     return answer_dict
 
 
-##############################################################################
 ##############################################################################
 def panvowellic(plus_y=False, only_once=True):
     anagrams = set()

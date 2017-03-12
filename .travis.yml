@@ -2,10 +2,14 @@ language: python
 python:
     - "2.7"
     - "3.4"
+    - "3.5"
 install:
     - pip install -r requirements.txt
+    - pip install coveralls
 script:
     - nosetests --with-coverage
+after_success:
+    coveralls
 notifications:
     email:
         cerebral.storming@gmail.com

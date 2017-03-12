@@ -3,18 +3,20 @@ from __future__ import print_function, division, absolute_import
 import collections
 import os
 import sys
-if sys.version_info.major == 3:
-    from functools import reduce
 import operator
 from optparse import OptionParser
 
-from . import constants
+from wordplay import constants
+
+if sys.version_info.major == 3:
+    from functools import reduce
 
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
-WORDS = set() ## filled in differently if main() or not_main()
+WORDS = set()  ## filled in differently if main() or not_main()
 _textdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "texts")
 _texts = [os.path.join(_textdir, f) for f in os.listdir(_textdir)]
+
 
 def readin_words():
     for fname in [f for f in _texts if f.endswith(".dict")]:
@@ -62,7 +64,7 @@ def looping_anagram(letters, nwords=1, MIN=3):
         anagram1 = ANAGRAMS[_calc_value(word1)]
         if not anagram1:
             continue
-        anagram2 = looping_anagram(word2, nwords-1)
+        anagram2 = looping_anagram(word2, nwords - 1)
         for a1 in anagram1:
             for a2 in anagram2:
                 ordered = " ".join(sorted((a1 + " " + a2).split(" ")))
@@ -97,15 +99,16 @@ def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
         answer_dict[""].update(looping_anagram(letters, nwords, MIN))
-        return  answer_dict
+        return answer_dict
     for lett in constants.ALPHABET[start:]:
-        tmp_dict = plus_many(letters+lett, nblanks-1, nwords, MIN, lett)
+        tmp_dict = plus_many(letters + lett, nblanks - 1, nwords, MIN, lett)
         for k, v in tmp_dict.items():
             if not v:
                 continue
             key = "".join(sorted(list(lett + k)))
             answer_dict[key].update(v)
     return answer_dict
+
 
 def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
     if isinstance(start, str):
@@ -115,7 +118,7 @@ def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
         answer_dict[""].update(anagram_with_fewer(letters, MIN))
         return answer_dict
     for lett in constants.ALPHABET[start:]:
-        tmp_dict = plus_many_with_fewer(letters + lett, nblanks-1, MIN, start)
+        tmp_dict = plus_many_with_fewer(letters + lett, nblanks - 1, MIN, start)
         for k, v in tmp_dict.items():
             if not v:
                 continue
@@ -143,6 +146,7 @@ def panvowellic(plus_y=False, only_once=True):
         anagrams.update(anagram_list)
     return anagrams
 
+
 ##############################################################################
 def not_main():
     readin_words()
@@ -151,11 +155,12 @@ def not_main():
         ANAGRAMS[value].add(word)
         LEN_VALUES[len(word)][value].add(word)
 
-USAGE = "{} <letters> [-n=nwords] [--MIN=minsize]".format(sys.argv[0])
-DESCR = "Returns list of anagrams for given letters and options"
-def main():
+
+def main(args):
+    USAGE = "{} <letters> [-n=nwords] [--MIN=minsize]".format(sys.argv[0])
+    DESCR = "Returns list of anagrams for given letters and options"
     p = OptionParser(usage=USAGE, description=DESCR)
-    p.add_option('-n','--nwords', type='int', default=1,
+    p.add_option('-n', '--nwords', type='int', default=1,
             help='Number of words to comprise a solution, default=1')
     p.add_option('--MIN', type='int', default=3,
             help='Minimum number of letters in each anagram, default=3')
@@ -165,7 +170,7 @@ def main():
             help="Letter to start <--extra> letters at, default='A'")
     p.add_option('-c', '--condensed', action='store_true',
             help='Prints condensed results in the <--extra> case')
-    options, args = p.parse_args()
+    options, args = p.parse_args(args)
 
     ## error-check input
     if len(args) != 1:
@@ -179,7 +184,6 @@ def main():
         p.error("nwords * MIN can't be greater than legnth of letters...")
     if any(val < 0 for val in (nwords, MIN, extra, start)):
         p.error("negative values for arguments make no physical sense")
-    ## done error-checking input
 
     ## read in only the necessary words
     upper_limit = len(letters) + extra - (MIN * (nwords - 1))
@@ -187,12 +191,11 @@ def main():
     for word in WORDS:
         if nwords == 1 and len(word) != (len(letters) + extra):
             continue
-        elif nwords > 1 and len(word) not in range(MIN, upper_limit+1):
+        elif nwords > 1 and len(word) not in range(MIN, upper_limit + 1):
             continue
         value = _calc_value(word)
         ANAGRAMS[value].add(word)
         LEN_VALUES[len(word)][value].add(word)
-    ## done reading in
     
     if extra == 0:
         anagrams = looping_anagram(letters, nwords, MIN)
@@ -207,12 +210,12 @@ def main():
         else:
             print(anagrams)
 
-    print("Found {} answer{}".format(len(anagrams), 
-                's' if len(anagrams)!= 1 else ''))
+    plural = '' if len(anagrams) == 1 else 's'
+    print("Found {} answer{}".format(len(anagrams), plural))
     return
 
 ##############################################################################
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1:])
 else:
     not_main()

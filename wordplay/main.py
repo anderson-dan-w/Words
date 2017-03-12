@@ -41,19 +41,23 @@ def main(sys_args):
 
     if extra == 0:
         anagrams = anagram.looping_anagram(letters, nwords, MIN)
+        n_anagrams = len(anagrams)
         print(anagrams)
     else:
-        anagrams = anagram.plus_many(letters, extra, nwords, MIN, start)
+        anagram_sets = anagram.plus_many(letters, extra, nwords, MIN, start)
         if condensed:
-            anagram_set = set()
-            for s in anagrams.values():
-                anagram_set.update(s)
-            print(anagram_set)
-        else:
+            anagrams = set()
+            for s in anagram_sets.values():
+                anagrams.update(s)
             print(anagrams)
+            n_anagrams = len(anagrams)
+        else:
+            from pprint import pprint
+            pprint(anagram_sets)
+            n_anagrams = sum(len(s) for s in anagram_sets.values())
 
-    plural = '' if len(anagrams) == 1 else 's'
-    print("Found {} answer{}".format(len(anagrams), plural))
+    plural = '' if n_anagrams == 1 else 's'
+    print("Found {} answer{}".format(n_anagrams, plural))
     return
 
 ##############################################################################

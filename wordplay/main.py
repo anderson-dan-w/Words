@@ -1,8 +1,14 @@
+import os
 import sys
 from argparse import ArgumentParser
 
-from wordplay import constants
-from wordplay import anagram
+try:
+    from wordplay import constants
+    from wordplay import anagram
+except ImportError:
+    sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+    from wordplay import constants
+    from wordplay import anagram
 
 
 def main(sys_args):

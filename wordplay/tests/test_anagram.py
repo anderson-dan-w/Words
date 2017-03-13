@@ -75,3 +75,15 @@ class TestAnagram(unittest.TestCase):
         expected = set(["ACT JINX", "CAT JINX"])
         observed = A.anagram(letters, 2)
         self.assertEqual(expected, observed)
+
+    def test_anagram_two_words_min_length(self):
+        letters = "TUSK JINX"
+        ## first, ensure we get a result with default MIN length
+        default_expected = set(["JINKS TUX", "JINX TUSK"])
+        default_observed = A.anagram(letters, nwords=2)
+        self.assertEqual(default_expected, default_observed)
+
+        ## now, test that setting MIN excludes "TUX"
+        expected = set(["JINX TUSK"])
+        observed = A.anagram(letters, nwords=2, MIN=4)
+        self.assertEqual(expected, observed)

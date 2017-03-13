@@ -9,11 +9,9 @@ from wordplay import constants
 if sys.version_info.major == 3:
     from functools import reduce
 
+WORDS = set()
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
-WORDS = set()  ## filled in differently if main() or not_main()
-_textdir = os.path.join(os.path.dirname(os.path.realpath(__file__)), "texts")
-_texts = [os.path.join(_textdir, f) for f in os.listdir(_textdir)]
 
 
 def _calc_value(letters):
@@ -32,7 +30,9 @@ def precalculate_values():
 
 
 def readin_words():
-    for fname in [f for f in _texts if f.endswith(".dict")]:
+    text_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "texts")
+    texts = [os.path.join(text_dir, f) for f in os.listdir(text_dir)]
+    for fname in [f for f in texts if f.endswith(".dict")]:
         with open(fname) as fh:
             text = str(fh.read()).replace("\r", "\n")
         words = (w for w in text.upper().split("\n") if w)

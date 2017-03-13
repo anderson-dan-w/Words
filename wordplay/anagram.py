@@ -12,6 +12,7 @@ if sys.version_info.major == 3:
 WORDS = set()
 ANAGRAMS = collections.defaultdict(set)
 LEN_VALUES = collections.defaultdict(lambda: collections.defaultdict(set))
+EMPTY = ""
 
 
 def _calc_value(letters):
@@ -40,6 +41,24 @@ def readin_words():
     precalculate_values()
 
 
+def normalize_letters(letters):
+    return EMPTY.join(l.upper() for l in letters if l.isalpha())
+
+
+def generate_str_splits(letters):
+    letters = normalize_letters(letters)
+    n_letters = len(letters)
+    max_combos = 2**(n_letters - 1)
+    for number in range(max_combos):
+        word1, word2 = EMPTY, EMPTY
+        for index, letter in enumerate(letters):
+            if (2**index) & number:
+                word1 += letter
+            else:
+                word2 += letter
+        yield word1, word2
+
+
 def anagram(letters, nwords=1, MIN=3):
     """ Find anagrams of a given set of letters. If only one anagram is desired
         it is a look-up in a precomputed table. If more than one anagram is
@@ -47,21 +66,11 @@ def anagram(letters, nwords=1, MIN=3):
         letters, checking each for anagrams, that are at least MIN letters
         long, which defaults to 3.
     """
-    letters = "".join(l.upper() for l in letters if l.isalpha())
     if nwords == 1:
-        return ANAGRAMS[_calc_value(letters)]
+        return ANAGRAMS[_calc_value(normalize_letters(letters))]
     anagrams = set()
-    nletts = len(letters)
-    maxIters = 2 ** (nletts - 1)
     alreadySeen = set()
-    for itr in range(maxIters):
-        word1 = ""
-        word2 = ""
-        for pos in range(nletts):
-            if (2**pos) & itr:
-                word1 += letters[pos]
-            else:
-                word2 += letters[pos]
+    for word1, word2 in generate_str_splits(letters):
         if word1 in alreadySeen or word2 in alreadySeen:
             continue
         alreadySeen.update({word1, word2})
@@ -79,17 +88,8 @@ def anagram(letters, nwords=1, MIN=3):
 
 
 def anagram_with_fewer(letters, MIN=3):
-    letters = "".join(lett.upper() for lett in letters if lett.isalpha())
     anagrams = set()
-    nletts = len(letters)
-    max_iters = 2 ** (nletts - 1)
-    for itr in range(max_iters):
-        word1, word2 = "", ""
-        for index in range(nletts):
-            if (2 ** index) & itr:
-                word1 += letters[index]
-            else:
-                word2 += letters[index]
+    for word1, word2 in generate_str_splits(letters):
         if len(word1) >= MIN:
             anagrams.update(anagram(word1))
         if len(word2) >= MIN:

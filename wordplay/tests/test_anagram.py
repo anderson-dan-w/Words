@@ -87,3 +87,10 @@ class TestAnagram(unittest.TestCase):
         expected = set(["JINX TUSK"])
         observed = A.anagram(letters, nwords=2, MIN=4)
         self.assertEqual(expected, observed)
+
+    def test_anagram_with_fewer(self):
+        letters = "CATS"
+        expected_contains = {"CAT", "ACT", "SAT"}
+        observed = A.anagram_with_fewer(letters)
+        for expected in expected_contains:
+            self.assertIn(expected, observed)

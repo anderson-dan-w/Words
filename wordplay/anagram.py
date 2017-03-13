@@ -69,11 +69,11 @@ def anagram(letters, nwords=1, MIN=3):
     if nwords == 1:
         return ANAGRAMS[_calc_value(normalize_letters(letters))]
     anagrams = set()
-    alreadySeen = set()
+    already_seen = set()
     for word1, word2 in generate_str_splits(letters):
-        if word1 in alreadySeen or word2 in alreadySeen:
+        if word1 in already_seen or word2 in already_seen:
             continue
-        alreadySeen.update({word1, word2})
+        already_seen.update({word1, word2})
         if len(word1) < MIN or len(word2) < (MIN * (nwords - 1)):
             continue
         anagram1 = ANAGRAMS[_calc_value(word1)]

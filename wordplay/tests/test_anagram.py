@@ -1,4 +1,5 @@
 import unittest
+import collections
 
 from wordplay import anagram as A
 
@@ -113,3 +114,56 @@ class TestAnagram(unittest.TestCase):
         observed = A.anagram_with_fewer(letters)
         for expected in expected_contains:
             self.assertIn(expected, observed)
+
+    def test_anagram_plus(self):
+        letters = "JNX"
+        expected = collections.defaultdict(set)
+        expected["I"].add("JINX")
+        observed = A.anagram_plus(letters)
+        self.assertEqual(expected, observed)
+
+    def test_anagram_plus_with_fewer(self):
+        letters = "JNX"
+        expected = collections.defaultdict(set)
+        expected["I"].update({"JIN", "JINX", "NIX"})
+        expected["U"].update({"JUN"})
+        observed = A.anagram_plus_with_fewer(letters)
+        self.assertEqual(expected, observed)
+
+    def test_get_panvowellic(self):
+        each_once_no_y = "FACETIOUS"
+        each_once_with_y = "FACETIOUSLY"
+        multi_no_y = "EDUCATIONAL"
+        multi_with_y = "EDUCATIONALLY"
+
+        ## CASE 1:
+        observed_once_no_y = A.get_panvowellic(plus_y=False, only_once=True)
+        ## y is *allowed* but not *required* in plus_u
+        for expect_in in (each_once_no_y, each_once_with_y):
+            self.assertIn(expect_in, observed_once_no_y)
+        ## but any vowel multiple times shouldn't be allowed
+        for expect_not in (multi_no_y, multi_with_y):
+            self.assertNotIn(expect_not, observed_once_no_y)
+
+        ## CASE 2:
+        observed_once_with_y = A.get_panvowellic(plus_y=True, only_once=True)
+        ## y is now required
+        self.assertIn(each_once_with_y, observed_once_with_y)
+        ## without y, and multi, aren't allowed
+        for expect_not in (each_once_no_y, multi_no_y, multi_with_y):
+            self.assertNotIn(expect_not, observed_once_with_y)
+
+        ## CASE 3:
+        observed_multi_no_y = A.get_panvowellic(plus_y=False, only_once=False)
+        ## y is allowed, not required, multi is allowed, not required
+        for expect_in in (
+                each_once_no_y, each_once_with_y, multi_no_y, multi_with_y):
+            self.assertIn(expect_in, observed_multi_no_y)
+
+        ## CASE 4:
+        observed_multi_with_y = A.get_panvowellic(plus_y=True, only_once=False)
+        ## y is required, multi is allowed not required
+        for expect_in in (each_once_with_y, multi_with_y):
+            self.assertIn(expect_in, observed_multi_with_y)
+        for expect_not in (each_once_no_y, multi_no_y):
+            self.assertNotIn(expect_not, observed_multi_with_y)

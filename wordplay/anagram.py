@@ -124,7 +124,7 @@ def anagram_plus_with_fewer(letters, nblanks=1, MIN=3, start=0):
         return answer_dict
     for letter in constants.ALPHABET[start:]:
         new_string = letters + letter
-        tmp_dict = anagram_plus_with_fewer(new_string, nblanks - 1, MIN, start)
+        tmp_dict = anagram_plus_with_fewer(new_string, nblanks - 1, MIN, letter)
         for k, v in tmp_dict.items():
             if not v:
                 continue
@@ -134,9 +134,9 @@ def anagram_plus_with_fewer(letters, nblanks=1, MIN=3, start=0):
 
 
 ##############################################################################
-def panvowellic(plus_y=False, only_once=True):
+def get_panvowellic(plus_y=False, only_once=True):
     anagrams = set()
-    str_vowels = "AEIOUY" if plus_y else "AEIOU"
+    str_vowels = "AEIOU" + ("Y" if plus_y else EMPTY)
     vowels = 1
     multi_vowels = []
     for v in str_vowels:
@@ -153,5 +153,5 @@ def panvowellic(plus_y=False, only_once=True):
     return anagrams
 
 
-if __name__ != '__main__':
+if __name__ != '__main__':  # pragma: no cover
     readin_words()

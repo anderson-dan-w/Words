@@ -84,8 +84,7 @@ def anagram_with_fewer(letters, MIN=3):
     nletts = len(letters)
     max_iters = 2 ** (nletts - 1)
     for itr in range(max_iters):
-        word1 = ""
-        word2 = ""
+        word1, word2 = "", ""
         for index in range(nletts):
             if (2 ** index) & itr:
                 word1 += letters[index]
@@ -98,37 +97,38 @@ def anagram_with_fewer(letters, MIN=3):
     return anagrams
 
 
-##############################################################################
-def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
+def anagram_plus(letters, nblanks=1, nwords=1, MIN=3, start=0):
     if isinstance(start, str):
         start = constants.ALPHABET.index(start.upper())
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
         answer_dict[""].update(anagram(letters, nwords, MIN))
         return answer_dict
-    for lett in constants.ALPHABET[start:]:
-        tmp_dict = plus_many(letters + lett, nblanks - 1, nwords, MIN, lett)
+    for letter in constants.ALPHABET[start:]:
+        new_string = letters + letter
+        tmp_dict = anagram_plus(new_string, nblanks - 1, nwords, MIN, letter)
         for k, v in tmp_dict.items():
             if not v:
                 continue
-            key = "".join(sorted(list(lett + k)))
+            key = "".join(sorted(list(letter + k)))
             answer_dict[key].update(v)
     return answer_dict
 
 
-def plus_many_with_fewer(letters, nblanks=1, MIN=3, start=0):
+def anagram_plus_with_fewer(letters, nblanks=1, MIN=3, start=0):
     if isinstance(start, str):
         start = constants.ALPHABET.index(start.upper())
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
         answer_dict[""].update(anagram_with_fewer(letters, MIN))
         return answer_dict
-    for lett in constants.ALPHABET[start:]:
-        tmp_dict = plus_many_with_fewer(letters + lett, nblanks - 1, MIN, start)
+    for letter in constants.ALPHABET[start:]:
+        new_string = letters + letter
+        tmp_dict = anagram_plus_with_fewer(new_string, nblanks - 1, MIN, start)
         for k, v in tmp_dict.items():
             if not v:
                 continue
-            key = "".join(sorted(list(lett + k)))
+            key = "".join(sorted(list(letter + k)))
             answer_dict[key].update(v)
     return answer_dict
 

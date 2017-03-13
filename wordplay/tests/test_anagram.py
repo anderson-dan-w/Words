@@ -58,6 +58,25 @@ class TestAnagram(unittest.TestCase):
         self.helper_assert_anagram_has_all_words()
         self.helper_assert_len_values_has_all_words()
 
+    def test_normalize_letters(self):
+        ## most basic assertion
+        self.assertEqual("A", A.normalize_letters("A"))
+        ## prove it capitalizes
+        self.assertEqual("A", A.normalize_letters("a"))
+        ## prove it ignores numbers, punctuation, spaces
+        self.assertEqual("A", A.normalize_letters("A 3?"))
+
+    def test_generate_str_splits(self):
+        letters = "ABC"
+        expected = [
+            ("", "ABC"),
+            ("A", "BC"),
+            ("B", "AC"),
+            ("AB", "C")
+        ]
+        observed = list(A.generate_str_splits(letters))
+        self.assertEqual(expected, observed)
+
     def test_anagram(self):
         letters = "AEGLLRY"
         expected = set(["ALLERGY", "GALLERY", "LARGELY", "REGALLY"])

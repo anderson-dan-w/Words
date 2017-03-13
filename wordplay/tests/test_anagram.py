@@ -58,20 +58,20 @@ class TestAnagram(unittest.TestCase):
         self.helper_assert_anagram_has_all_words()
         self.helper_assert_len_values_has_all_words()
 
-    def test_looping_anagram(self):
+    def test_anagram(self):
         letters = "AEGLLRY"
         expected = set(["ALLERGY", "GALLERY", "LARGELY", "REGALLY"])
-        observed = A.looping_anagram(letters)
+        observed = A.anagram(letters)
         self.assertEqual(expected, observed)
 
-    def test_looping_anagram_two_words(self):
-        letters = "BUGJINX"
+    def test_anagram_two_words(self):
+        letters = "BUG JINX"
         expected = set(["BUG JINX"])
-        observed = A.looping_anagram(letters, 2)
+        observed = A.anagram(letters, 2)
         self.assertEqual(expected, observed)
 
-    def test_looping_anagram_two_words_multiple_results(self):
-        letters = "ACIJNTX"
+    def test_anagram_two_words_multiple_results(self):
+        letters = "CAT JINX"
         expected = set(["ACT JINX", "CAT JINX"])
-        observed = A.looping_anagram(letters, 2)
+        observed = A.anagram(letters, 2)
         self.assertEqual(expected, observed)

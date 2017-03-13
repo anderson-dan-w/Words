@@ -40,7 +40,7 @@ def readin_words():
     precalculate_values()
 
 
-def looping_anagram(letters, nwords=1, MIN=3):
+def anagram(letters, nwords=1, MIN=3):
     """ Find anagrams of a given set of letters. If only one anagram is desired
         it is a look-up in a precomputed table. If more than one anagram is
         requested, it iteratively considers every possible splitting of
@@ -70,7 +70,7 @@ def looping_anagram(letters, nwords=1, MIN=3):
         anagram1 = ANAGRAMS[_calc_value(word1)]
         if not anagram1:
             continue
-        anagram2 = looping_anagram(word2, nwords - 1)
+        anagram2 = anagram(word2, nwords - 1)
         for a1 in anagram1:
             for a2 in anagram2:
                 ordered = " ".join(sorted((a1 + " " + a2).split(" ")))
@@ -92,9 +92,9 @@ def anagram_with_fewer(letters, MIN=3):
             else:
                 word2 += letters[index]
         if len(word1) >= MIN:
-            anagrams.update(looping_anagram(word1))
+            anagrams.update(anagram(word1))
         if len(word2) >= MIN:
-            anagrams.update(looping_anagram(word2))
+            anagrams.update(anagram(word2))
     return anagrams
 
 
@@ -104,7 +104,7 @@ def plus_many(letters, nblanks=2, nwords=1, MIN=3, start=0):
         start = constants.ALPHABET.index(start.upper())
     answer_dict = collections.defaultdict(set)
     if nblanks == 0:
-        answer_dict[""].update(looping_anagram(letters, nwords, MIN))
+        answer_dict[""].update(anagram(letters, nwords, MIN))
         return answer_dict
     for lett in constants.ALPHABET[start:]:
         tmp_dict = plus_many(letters + lett, nblanks - 1, nwords, MIN, lett)

@@ -1,5 +1,5 @@
 # Words
-[![Build Status](https://travis-ci.org/anderson-dan-w/Words.svg?branch=master)](https://travis-ci.org/anderson-dan-w/Words) [![Coverage Status](https://coveralls.io/repos/github/anderson-dan-w/Words/badge.svg?branch=master)](https://coveralls.io/github/anderson-dan-w/Words?branch=master)
+[![Build Status](https://img.shields.io/travis/anderson-dan-w/Words.svg)]() [![Coverage Status](https://img.shields.io/coveralls/anderson-dan-w/Words.svg)]()
 =====
 
 Word and letter related python code (anagrams, shifts, etc)
